@@ -1,24 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Control } from './components/Control';
+import { ControlCenter } from './components/ControlCenter';
+import { Canvas } from './components/Canvas';
+import { InfoRegion } from './components/InfoRegion';
+import core from './core';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    <div>
+      <Canvas />
+
+      <ControlCenter>
+        <Control thisControls={{title: "Wall", icon: require("./assets/wall.png"), action: core.reset}} subControls={[
+          {title: "Trash", icon: require("./assets/trash.png"), action: core.reset},
+          {title: "Reset", icon: require("./assets/reset.png"), action: core.reset},
+          {title: "Reset", icon: require("./assets/reset.png"), action: core.reset},
+          {title: "Reset", icon: require("./assets/reset.png"), action: core.reset},
+          {title: "Reset", icon: require("./assets/reset.png"), action: core.reset}
+          ]}/>
+          <Control thisControls={{title: "Reset", icon: require("./assets/reset.png"), action: core.reset}} />
+      </ControlCenter>
+
+      <InfoRegion>
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+          x: {core.mouse.x} y: {core.mouse.y}
+        </p> 
+      </InfoRegion>
     </div>
   );
 }
