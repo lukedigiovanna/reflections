@@ -43,7 +43,7 @@ const AdditionalButtons = styled.div`
     display: flex;
     flex-direction: row;
     position: absolute;
-    left: 95%;
+    left: 90%;
 
     overflow: hidden;
 

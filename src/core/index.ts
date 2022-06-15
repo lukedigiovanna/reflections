@@ -9,12 +9,17 @@ class Wall {
     constructor(public p1: Point, public p2: Point) {}
 }
 
+interface UpdateInfo {
+    mouseX: number;
+    mouseY: number;
+}
+
 class Core {
     private canvas: HTMLCanvasElement | null = null;
     private walls: Wall[] = [];
     private drawingWall: Wall | null = null;
     public mouse: Point = new Point(0, 0);
-
+    
     constructor() {
         this.render = this.render.bind(this);
         this.reset = this.reset.bind(this);

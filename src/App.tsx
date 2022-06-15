@@ -5,7 +5,24 @@ import { Canvas } from './components/Canvas';
 import { InfoRegion } from './components/InfoRegion';
 import core from './core';
 
+interface Info {
+  mouseX: number;
+  mouseY: number;
+}
+
 function App() {
+  const [infoState, setInfoState] = React.useState<Info>({mouseX: 0, mouseY: 0});
+
+  const updateInfo = () => {
+    setInfoState({
+      mouseX: core.mouse.x,
+      mouseY: core.mouse.y
+    });
+    console.log("whoa");
+  }
+
+  setInterval(updateInfo, 100);
+
   return (
     <div>
       <Canvas />
@@ -23,8 +40,11 @@ function App() {
 
       <InfoRegion>
         <p>
-          x: {core.mouse.x} y: {core.mouse.y}
+          x: {infoState.mouseX} y: {infoState.mouseY}
         </p> 
+        <p>
+          Reflections v0.0.1
+        </p>
       </InfoRegion>
     </div>
   );
