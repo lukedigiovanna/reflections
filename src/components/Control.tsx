@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import theme from '../constants/theme';
 
-const ControlButton = styled.div<{clickable?: boolean}>`
+const ControlButton = styled.div<{clickable?: boolean, numSubButtons?: number}>`
     width: 50px;
     height: 50px;
     background-color: ${theme.color.primary};
@@ -22,7 +22,7 @@ const ControlButton = styled.div<{clickable?: boolean}>`
         
         div {
             /* visibility: visible; */
-            width: 500%;
+            width: ${props => props.numSubButtons ?  props.numSubButtons * 100 + "%" : "100%"};
         }
     }
 
@@ -64,10 +64,9 @@ const Control = (props: {thisControls: ControlProps, subControls?: ControlProps[
             if (props.thisControls.action) {
                 props.thisControls.action();
             }
-        }}>
-            {/* {props.title} */}
-            <Icon src={props.thisControls.icon} />
-
+        }} numSubButtons={props.subControls?.length}>
+            <Icon src={props.thisControls.icon} alt={props.thisControls.title} title={props.thisControls.title}/>
+            
             <AdditionalButtons>
                 {
                     props.subControls && 
@@ -78,7 +77,7 @@ const Control = (props: {thisControls: ControlProps, subControls?: ControlProps[
                                     control.action();
                                 }
                             }}>
-                                <Icon src={control.icon} />
+                                <Icon src={control.icon} alt={control.title} title={control.title}/>
                             </ControlButton>
                         )
                     })

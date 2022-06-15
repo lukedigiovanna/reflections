@@ -18,7 +18,6 @@ function App() {
       mouseX: core.mouse.x,
       mouseY: core.mouse.y
     });
-    console.log("whoa");
   }
 
   setInterval(updateInfo, 100);
@@ -29,11 +28,8 @@ function App() {
 
       <ControlCenter>
         <Control thisControls={{title: "Wall", icon: require("./assets/wall.png"), action: core.reset}} subControls={[
-          {title: "Trash", icon: require("./assets/trash.png"), action: core.reset},
-          {title: "Reset", icon: require("./assets/reset.png"), action: core.reset},
-          {title: "Reset", icon: require("./assets/reset.png"), action: core.reset},
-          {title: "Reset", icon: require("./assets/reset.png"), action: core.reset},
-          {title: "Reset", icon: require("./assets/reset.png"), action: core.reset}
+          {title: "Delete", icon: require("./assets/trash.png"), action: core.reset},
+          {title: "Light", icon: require("./assets/light.png"), action: core.reset},
           ]}/>
           <Control thisControls={{title: "Reset", icon: require("./assets/reset.png"), action: core.reset}} />
       </ControlCenter>

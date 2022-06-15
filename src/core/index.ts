@@ -9,11 +9,6 @@ class Wall {
     constructor(public p1: Point, public p2: Point) {}
 }
 
-interface UpdateInfo {
-    mouseX: number;
-    mouseY: number;
-}
-
 class Core {
     private canvas: HTMLCanvasElement | null = null;
     private walls: Wall[] = [];
