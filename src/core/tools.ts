@@ -1,5 +1,5 @@
 
-import { Wall, Point } from './utils';
+import { Wall, Vector, findClosestWall } from './utils';
 import core from './index';
 import { ControlProps } from '../components/Control';
 
@@ -29,21 +29,19 @@ const wallTool: Tool = {
     onClick: (e: MouseEvent) => {
         const {clientX, clientY} = e;
         if (wallTool.drawingWall) {
-            wallTool.drawingWall.p2 = new Point(clientX, clientY);
+            wallTool.drawingWall.p2 = new Vector(clientX, clientY);
             core.walls.push(wallTool.drawingWall);
             wallTool.drawingWall = null;
         }
         else {
-            wallTool.drawingWall = new Wall(new Point(clientX, clientY), new Point(clientX, clientY));
+            wallTool.drawingWall = new Wall(new Vector(clientX, clientY), new Vector(clientX, clientY));
         }
     },
 
     onMouseMove: (e: MouseEvent) => {
         const {clientX, clientY} = e;
-        core.mouse.x = clientX;
-        core.mouse.y = clientY;
         if (wallTool.drawingWall) {
-            wallTool.drawingWall.p2 = new Point(clientX, clientY);
+            wallTool.drawingWall.p2 = new Vector(clientX, clientY);
         }
     } 
 }
@@ -58,27 +56,36 @@ const deleteTool: Tool = {
         }
     },
 
-    onEnable: () => {
-        console.log("enableing delete tool");
-    },
+    closestWall: null,
 
     onClick: (e: MouseEvent) => {
-        console.log("clicked delete");
+        if (deleteTool.closestWall) {
+            core.walls = core.walls.filter(w => w !== deleteTool.closestWall);
+        }
+    },
+
+    onMouseMove: (e: MouseEvent) => {
         const {clientX, clientY} = e;
-        const wall = core.walls.find(w => {
-            return (
-                Math.abs(w.p1.x - clientX) < 5 &&
-                Math.abs(w.p1.y - clientY) < 5
-            );
-        }
-        );
-        if (wall) {
-            core.walls = core.walls.filter(w => w !== wall);
-        }
+        deleteTool.closestWall = findClosestWall(core.walls, new Vector(clientX, clientY));
     }
 }
 
-// wallTool.onMouseMove = wallTool.onMouseMove?.bind(wallTool);
+const lightTool = {
+    controlProps: {
+        title: "Light",
+        icon: require('../assets/light.png'),
+        action: () => {
+            core.changeTool(lightTool);
+        }
+    },
 
-export default [wallTool, deleteTool];
-export { wallTool };
+    onClick: (e: MouseEvent) => {
+        const {clientX, clientY} = e;
+        core.lights.push(new Vector(clientX, clientY));
+    }
+}
+
+const allTools = [wallTool, deleteTool, lightTool];
+export default allTools;
+
+export { wallTool, deleteTool, lightTool };

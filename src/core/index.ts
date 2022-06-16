@@ -1,13 +1,14 @@
 // core of the application
 
-import { wallTool, Tool } from './tools';
-import { Wall, Point } from './utils';
+import { wallTool, deleteTool, lightTool, Tool } from './tools';
+import { Wall, Vector } from './utils';
 
 class Core {
     private canvas: HTMLCanvasElement | null = null;
     public walls: Wall[] = [];
-    private currentTool: Tool = wallTool;
-    public mouse: Point = new Point(0, 0);
+    public lights: Vector[] = [];
+    public currentTool: Tool = wallTool;
+    public mouse: Vector = new Vector(0, 0);
 
     constructor() {
         this.render = this.render.bind(this);
@@ -30,6 +31,9 @@ class Core {
     }
 
     onMouseMove(e: any) {
+        const { clientX, clientY } = e;
+        this.mouse.x = clientX;
+        this.mouse.y = clientY;
         this.currentTool.onMouseMove?.(e);
     }
 
@@ -70,13 +74,25 @@ class Core {
                 ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
                 this.walls.forEach((wall: Wall) => {
-                    this.drawWall(ctx, wall, "white");
+                    if (wall === deleteTool.closestWall) {
+                        this.drawWall(ctx, wall, "red");
+                    }
+                    else {
+                        this.drawWall(ctx, wall, "white");
+                    }
+                });
+
+                this.lights.forEach((light: Vector) => {
+                    ctx.beginPath();
+                    ctx.arc(light.x, light.y, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = "yellow";
+                    ctx.fill();
                 });
 
                 if (wallTool.drawingWall) {
                     this.drawWall(ctx, wallTool.drawingWall, "pink");
                 }
-                else {
+                else if (this.currentTool === wallTool || this.currentTool === lightTool) {
                     ctx.beginPath();
                     ctx.arc(this.mouse.x, this.mouse.y, 5, 0, 2 * Math.PI);
                     ctx.fillStyle = "rgba(160, 160, 160, 0.5)";

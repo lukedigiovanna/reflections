@@ -5,7 +5,7 @@ const ControlButton = styled.div<{clickable?: boolean, numSubButtons?: number}>`
     width: 50px;
     height: 50px;
     background-color: ${theme.color.primary};
-    margin: 6px;
+    margin: 3px;
     color: white;
     display: flex;
     justify-content: center;
@@ -43,7 +43,7 @@ const AdditionalButtons = styled.div`
     display: flex;
     flex-direction: row;
     position: absolute;
-    left: 90%;
+    left: 100%;
 
     overflow: hidden;
 

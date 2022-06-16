@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Control } from './components/Control';
 import { ControlCenter } from './components/ControlCenter';
 import { Canvas } from './components/Canvas';
@@ -29,14 +29,9 @@ function App() {
 
       <ControlCenter>
         <Control controls={
-          tools.map((tool) => {
+          [core.currentTool, ...tools.filter(tool => tool !== core.currentTool)].map((tool) => {
             return tool.controlProps
           })
-          // [
-          //   {title: "Wall", icon: require("./assets/wall.png"), action: core.reset},
-          //   {title: "Delete", icon: require("./assets/trash.png"), action: core.reset},
-          //   {title: "Light", icon: require("./assets/light.png"), action: core.reset},
-          // ]
         }/>
         
         <Control controls={[{title: "Reset", icon: require("./assets/reset.png"), action: core.reset}]} />
