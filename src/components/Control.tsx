@@ -52,30 +52,34 @@ const AdditionalButtons = styled.div`
     transition: width 0.7s;
 `
 
-interface ControlProps {
+export interface ControlProps {
     title: string;
     icon?: any;
     action?: () => void;
 }
 
-const Control = (props: {thisControls: ControlProps, subControls?: ControlProps[]}) => {
+const Control = (props: {controls: ControlProps[]}) => {
+    if (props.controls.length == 0) {
+        throw new Error("Control must have at least one control");
+    }
     return (
         <ControlButton onClick={() => {
-            if (props.thisControls.action) {
-                props.thisControls.action();
+            if (props.controls[0].action) {
+                props.controls[0].action();
             }
-        }} numSubButtons={props.subControls?.length}>
-            <Icon src={props.thisControls.icon} alt={props.thisControls.title} title={props.thisControls.title}/>
+        }} numSubButtons={props.controls.length - 1}>
+            <Icon src={props.controls[0].icon} alt={props.controls[0].title} title={props.controls[0].title}/>
             
             <AdditionalButtons>
                 {
-                    props.subControls && 
-                    props.subControls.map((control, index) => {
+                    props.controls.slice(1).map((control, index) => {
                         return (
-                            <ControlButton key={index} clickable onClick={() => {
+                            <ControlButton key={index} clickable onClick={(e) => {
                                 if (control.action) {
                                     control.action();
                                 }
+
+                                e.stopPropagation();
                             }}>
                                 <Icon src={control.icon} alt={control.title} title={control.title}/>
                             </ControlButton>

@@ -1,20 +1,14 @@
 // core of the application
 
-
-class Point {
-    constructor(public x: number, public y: number) {}
-}
-
-class Wall {
-    constructor(public p1: Point, public p2: Point) {}
-}
+import { wallTool, Tool } from './tools';
+import { Wall, Point } from './utils';
 
 class Core {
     private canvas: HTMLCanvasElement | null = null;
-    private walls: Wall[] = [];
-    private drawingWall: Wall | null = null;
+    public walls: Wall[] = [];
+    private currentTool: Tool = wallTool;
     public mouse: Point = new Point(0, 0);
-    
+
     constructor() {
         this.render = this.render.bind(this);
         this.reset = this.reset.bind(this);
@@ -22,7 +16,6 @@ class Core {
 
     reset() {
         this.walls = [];
-        this.drawingWall = null;
     }
 
     setCanvas(canvas: HTMLCanvasElement | null) {
@@ -37,24 +30,17 @@ class Core {
     }
 
     onMouseMove(e: any) {
-        const {clientX, clientY} = e;
-        this.mouse.x = clientX;
-        this.mouse.y = clientY;
-        if (this.drawingWall) {
-            this.drawingWall.p2 = new Point(clientX, clientY);
-        }
+        this.currentTool.onMouseMove?.(e);
     }
 
     onClick(e: any) {
-        const {clientX, clientY} = e;
-        if (this.drawingWall) {
-            this.drawingWall.p2 = new Point(clientX, clientY);
-            this.walls.push(this.drawingWall);
-            this.drawingWall = null;
-        }
-        else {
-            this.drawingWall = new Wall(new Point(clientX, clientY), new Point(clientX, clientY));
-        }
+        this.currentTool.onClick?.(e);
+    }
+
+    changeTool(tool: Tool) {
+        this.currentTool.onDisable?.();
+        this.currentTool = tool;
+        this.currentTool.onEnable?.();
     }
 
     private drawWall(ctx: CanvasRenderingContext2D, wall: Wall, color: string) {
@@ -87,8 +73,8 @@ class Core {
                     this.drawWall(ctx, wall, "white");
                 });
 
-                if (this.drawingWall) {
-                    this.drawWall(ctx, this.drawingWall, "pink");
+                if (wallTool.drawingWall) {
+                    this.drawWall(ctx, wallTool.drawingWall, "pink");
                 }
                 else {
                     ctx.beginPath();

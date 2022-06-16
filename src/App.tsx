@@ -4,6 +4,7 @@ import { ControlCenter } from './components/ControlCenter';
 import { Canvas } from './components/Canvas';
 import { InfoRegion } from './components/InfoRegion';
 import core from './core';
+import tools from './core/tools';
 
 interface Info {
   mouseX: number;
@@ -27,11 +28,18 @@ function App() {
       <Canvas />
 
       <ControlCenter>
-        <Control thisControls={{title: "Wall", icon: require("./assets/wall.png"), action: core.reset}} subControls={[
-          {title: "Delete", icon: require("./assets/trash.png"), action: core.reset},
-          {title: "Light", icon: require("./assets/light.png"), action: core.reset},
-          ]}/>
-          <Control thisControls={{title: "Reset", icon: require("./assets/reset.png"), action: core.reset}} />
+        <Control controls={
+          tools.map((tool) => {
+            return tool.controlProps
+          })
+          // [
+          //   {title: "Wall", icon: require("./assets/wall.png"), action: core.reset},
+          //   {title: "Delete", icon: require("./assets/trash.png"), action: core.reset},
+          //   {title: "Light", icon: require("./assets/light.png"), action: core.reset},
+          // ]
+        }/>
+        
+        <Control controls={[{title: "Reset", icon: require("./assets/reset.png"), action: core.reset}]} />
       </ControlCenter>
 
       <InfoRegion>
