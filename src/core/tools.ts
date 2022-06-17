@@ -1,5 +1,5 @@
 
-import { Wall, Vector, findClosestWall } from './utils';
+import { LineSegment, Vector, findClosestWall } from './utils';
 import core from './index';
 import { ControlProps } from '../components/Control';
 
@@ -34,7 +34,7 @@ const wallTool: Tool = {
             wallTool.drawingWall = null;
         }
         else {
-            wallTool.drawingWall = new Wall(new Vector(clientX, clientY), new Vector(clientX, clientY));
+            wallTool.drawingWall = new LineSegment(new Vector(clientX, clientY), new Vector(clientX, clientY));
         }
     },
 

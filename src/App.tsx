@@ -35,6 +35,11 @@ function App() {
         }/>
         
         <Control controls={[{title: "Reset", icon: require("./assets/reset.png"), action: core.reset}]} />
+        <Control controls={
+          [{title: "Start", icon: require("./assets/start.png"), action: core.start}
+          , {title: "Pause", icon: require("./assets/pause.png"), action: core.pause}
+          , {title: "Stop", icon: require("./assets/stop.png"), action: core.resetTimer}]
+        } />
       </ControlCenter>
 
       <InfoRegion>

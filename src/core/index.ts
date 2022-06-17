@@ -1,22 +1,27 @@
 // core of the application
 
 import { wallTool, deleteTool, lightTool, Tool } from './tools';
-import { Wall, Vector } from './utils';
+import { LineSegment, Timer, Vector } from './utils';
 
 class Core {
     private canvas: HTMLCanvasElement | null = null;
-    public walls: Wall[] = [];
+    public walls: LineSegment[] = [];
     public lights: Vector[] = [];
     public currentTool: Tool = wallTool;
     public mouse: Vector = new Vector(0, 0);
+    private timer: Timer = new Timer();
 
     constructor() {
         this.render = this.render.bind(this);
         this.reset = this.reset.bind(this);
+        this.start= this.start.bind(this);
+        this.resetTimer = this.resetTimer.bind(this);
+        this.pause = this.pause.bind(this);
     }
 
     reset() {
         this.walls = [];
+        this.lights = [];
     }
 
     setCanvas(canvas: HTMLCanvasElement | null) {
@@ -47,7 +52,19 @@ class Core {
         this.currentTool.onEnable?.();
     }
 
-    private drawWall(ctx: CanvasRenderingContext2D, wall: Wall, color: string) {
+    start() {
+        this.timer.start();
+    }
+
+    pause() {
+        this.timer.pause();
+    }
+
+    resetTimer() {
+        this.timer.reset();
+    }
+
+    private drawWall(ctx: CanvasRenderingContext2D, wall: LineSegment, color: string) {
         ctx.beginPath();
         ctx.moveTo(wall.p1.x, wall.p1.y);
         ctx.lineTo(wall.p2.x, wall.p2.y);
@@ -64,6 +81,41 @@ class Core {
         ctx.fill();
     }
 
+    private drawRaycast(ctx: CanvasRenderingContext2D, origin: Vector, ray: Vector, color: string, count: number, maxDistance: number = 300) {
+        if (count === 0 || maxDistance <= 0) {
+            return;
+        }
+
+        let closestDistance: number = 10000;
+        let closest: any = null;
+
+        this.walls.forEach((w: LineSegment) => {
+            const t = w.raycastDistance(origin, ray);
+            if (t < closestDistance) {
+                closestDistance = t;
+                closest = w;
+            }
+        });
+
+        closestDistance = Math.min(maxDistance, closestDistance);
+
+        const end = origin.add(ray.multiply(closestDistance - 1));
+
+        if (closest) {
+            // come up with new vectored angle
+            const n = closest.normal.normalized();
+            const newRay = ray.subtract(n.multiply(2 * ray.dot(n)));
+            this.drawRaycast(ctx, end, newRay, color, count - 1, maxDistance - closestDistance);
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+
     render() {
         this.updateCanvasDimensions();
         
@@ -73,12 +125,18 @@ class Core {
                 ctx.fillStyle = "black";
                 ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-                this.walls.forEach((wall: Wall) => {
+                this.walls.forEach((wall: LineSegment) => {
                     if (wall === deleteTool.closestWall) {
                         this.drawWall(ctx, wall, "red");
                     }
                     else {
                         this.drawWall(ctx, wall, "white");
+                    }
+                });
+
+                this.lights.forEach((light: Vector) => {
+                    for (let theta = 0; theta <= Math.PI * 2; theta += Math.PI * 2 / 300) {
+                        this.drawRaycast(ctx, light, new Vector(Math.cos(theta), Math.sin(theta)), "yellow", 100, this.timer.elapsed * 200);
                     }
                 });
 
